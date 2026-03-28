@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const api = axios.create({ baseURL: '/api' })
+const api = axios.create({
+  baseURL: 'https://tawangmemories-backend.deployhub.online/api'
+});
 
 export const getPlaces = () => api.get('/places')
 export const getPlace = (slug) => api.get(`/places/${slug}`)
