@@ -32,4 +32,4 @@ export const uploadPhoto = (fd, pw) => api.post('/photos/upload', fd, { headers:
 export const deletePhoto = (id, pw) => api.delete(`/photos/${id}`, { headers: auth(pw) })
 
 // Download zip
-export const downloadPlacePhotos = (slug) => window.open(`/api/photos/download/${slug}`, '_blank')
+export const downloadPlacePhotos = (slug) => window.open(`https://tawangmemories-backend.deployhub.online/api/photos/download/${slug}`, '_blank')
