@@ -1,263 +1,69 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Typography, Grid, Card, CardActionArea, Chip, CircularProgress, Container } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
-import { getPlaces } from '../api.js'
-import ExploreIcon from '@mui/icons-material/Explore'
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
+// src/pages/HomePage.jsx
+import React, { useEffect, useState } from 'react';
+import {
+  Box, Typography, Grid, Card, CardActionArea, Chip, CircularProgress,
+  Container, Skeleton
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { getPlaces } from '../api.js';
+import ExploreIcon from '@mui/icons-material/Explore';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
+import PeopleIcon from '@mui/icons-material/People';
+import PlaceIcon from '@mui/icons-material/Place';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-const PLACE_EMOJIS = {
-  'dirang': '🌸',
-  'sela-pass': '❄️',
-  'jaswant-garh': '🎖️',
-  'nuranang-falls': '💧',
-  'tawang-monastery': '🛕',
-  'madhuri-lake': '🏔️',
-  'pt-tso': '🌊',
-  'bum-la-pass': '🗺️',
-  'sangti-valley': '🦢',
-}
-
-const DAY_LABELS = {
-  1: 'Day 1 — Guwahati → Dirang',
-  2: 'Day 2 — Dirang → Tawang',
-  3: 'Day 3 — Bum La Excursion',
-  4: 'Day 4 — Tawang → Dirang',
-  5: 'Day 5 — Return',
-}
-
-const HERO_IMAGE = 'https://api-devload.cloudcoderhub.in/public/69c6aa04b72bd53163742dc2/1774682147864c39c16fcce69b701513c0f5b.jpg'
-
-function ParallaxHero() {
-  const { scrollY } = useScroll()
-  const y = useTransform(scrollY, [0, 500], [0, 200])
-  const opacity = useTransform(scrollY, [0, 400], [1, 0])
-  const [imgLoaded, setImgLoaded] = useState(false)
-
-  return (
-    <Box
-      sx={{
-        position: 'relative',
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        background: '#080c0f',
-      }}
-    >
-      {/* Skeleton shimmer while image loads */}
-      <AnimatePresence>
-        {!imgLoaded && (
-          <motion.div
-            key="skeleton"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            style={{ position: 'absolute', inset: 0, zIndex: 1 }}
-          >
-            <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #080c0f 0%, #0d1a28 50%, #080c0f 100%)' }} />
-            <Box
-              component={motion.div}
-              animate={{ x: ['-100%', '200%'] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-              sx={{
-                position: 'absolute', inset: 0,
-                background: 'linear-gradient(105deg, transparent 30%, rgba(200,169,110,0.07) 50%, transparent 70%)',
-              }}
-            />
-            <Box
-              component={motion.div}
-              animate={{ opacity: [0.3, 0.7, 0.3] }}
-              transition={{ duration: 2.5, repeat: Infinity }}
-              sx={{ position: 'absolute', bottom: 0, width: '100%' }}
-            >
-              <svg viewBox="0 0 1440 300" preserveAspectRatio="none" style={{ width: '100%', height: 300, display: 'block' }}>
-                <polygon points="0,300 200,120 400,200 600,80 800,160 1000,50 1200,140 1440,100 1440,300" fill="rgba(200,169,110,0.05)" />
-                <polygon points="0,300 300,180 550,240 750,150 950,210 1150,130 1440,190 1440,300" fill="rgba(200,169,110,0.03)" />
-              </svg>
-            </Box>
-            <Box sx={{ position: 'absolute', bottom: 36, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1.5 }}>
-              <CircularProgress size={13} sx={{ color: 'rgba(200,169,110,0.45)' }} />
-              <Typography sx={{ color: 'rgba(200,169,110,0.4)', fontSize: '0.7rem', letterSpacing: '0.3em', textTransform: 'uppercase' }}>
-                Loading
-              </Typography>
-            </Box>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Parallax background image */}
-      <motion.div style={{ y, position: 'absolute', top: '-10%', left: 0, right: 0, bottom: '-10%', zIndex: 0 }}>
-        <motion.img
-          src={HERO_IMAGE}
-          onLoad={() => setImgLoaded(true)}
-          initial={{ opacity: 0, scale: 1.06 }}
-          animate={imgLoaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.06 }}
-          transition={{ duration: 1.4, ease: 'easeOut' }}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-        />
-      </motion.div>
-
-      {/* Overlay gradient */}
-      <Box
-        sx={{
-          position: 'absolute', inset: 0, zIndex: 1,
-          background: `linear-gradient(to bottom,
-            rgba(8,12,15,0.5) 0%,
-            rgba(8,12,15,0.25) 35%,
-            rgba(8,12,15,0.6) 70%,
-            rgba(8,12,15,1) 100%)`,
-        }}
-      />
-
-      {/* Stars */}
-      {Array.from({ length: 40 }).map((_, i) => (
-        <Box
-          key={i}
-          component={motion.div}
-          animate={{ opacity: [0.1, 0.8, 0.1] }}
-          transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 4 }}
-          sx={{
-            position: 'absolute', zIndex: 2,
-            width: Math.random() * 2 + 1,
-            height: Math.random() * 2 + 1,
-            borderRadius: '50%',
-            background: '#fff',
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 40}%`,
-          }}
-        />
-      ))}
-
-      {/* Hero text */}
-      <motion.div style={{ opacity, position: 'relative', zIndex: 3, textAlign: 'center' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-        >
-          <Typography
-            sx={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: { xs: '0.85rem', md: '1rem' },
-              color: '#c8a96e',
-              letterSpacing: '0.4em',
-              textTransform: 'uppercase',
-              mb: 2,
-            }}
-          >
-            Arunachal Pradesh · 2024
-          </Typography>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
-        >
-          <Typography
-            variant="h1"
-            sx={{
-              fontSize: { xs: '3rem', sm: '4.5rem', md: '6.5rem' },
-              fontWeight: 700,
-              color: '#f0e8d8',
-              lineHeight: 1.05,
-              mb: 1,
-            }}
-          >
-            Tawang
-          </Typography>
-          <Typography
-            variant="h1"
-            sx={{
-              fontSize: { xs: '2rem', sm: '3rem', md: '4rem' },
-              fontWeight: 400,
-              fontStyle: 'italic',
-              color: '#c8a96e',
-              lineHeight: 1,
-              mb: 3,
-            }}
-          >
-            Memories
-          </Typography>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        >
-          <Typography
-            sx={{
-              color: '#9a8a72',
-              fontSize: { xs: '0.9rem', md: '1.05rem' },
-              maxWidth: 480,
-              mx: 'auto',
-              lineHeight: 1.8,
-              fontWeight: 300,
-            }}
-          >
-            A 5-day journey through sacred monasteries, high mountain passes, and pristine Himalayan lakes
-          </Typography>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1 }}
-        >
-          <Box
-            component={motion.div}
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            sx={{ mt: 6, color: '#c8a96e', fontSize: '1.5rem' }}
-          >
-            ↓
-          </Box>
-        </motion.div>
-      </motion.div>
-    </Box>
-  )
-}
-
+// ---- Place Card (same as before, but slightly polished) ----
 function PlaceCard({ place, index }) {
-  const navigate = useNavigate()
-  const emoji = PLACE_EMOJIS[place.slug] || '📍'
+  const navigate = useNavigate();
+  const dateStr = place.date
+    ? new Date(place.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    : '';
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 60 }}
+      initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.6, delay: index * 0.08, ease: 'easeOut' }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.55, delay: (index % 3) * 0.07, ease: 'easeOut' }}
     >
       <Card
         sx={{
-          background: 'rgba(15,21,25,0.8)',
-          border: '1px solid rgba(200,169,110,0.1)',
+          background: 'rgba(17,24,22,0.9)',
+          border: '1px solid rgba(95,180,156,0.1)',
           borderRadius: 3,
           overflow: 'hidden',
           transition: 'all 0.4s ease',
           '&:hover': {
-            border: '1px solid rgba(200,169,110,0.4)',
+            border: '1px solid rgba(95,180,156,0.4)',
             transform: 'translateY(-6px)',
-            boxShadow: '0 20px 60px rgba(200,169,110,0.1)',
-            '& .cover-img': { transform: 'scale(1.08)' },
-            '& .place-emoji': { transform: 'scale(1.2)' },
+            boxShadow: '0 20px 60px rgba(95,180,156,0.1)',
+            '& .cover-img': { transform: 'scale(1.07)' },
           },
         }}
       >
         <CardActionArea onClick={() => navigate(`/place/${place.slug}`)}>
-          {/* Image or placeholder */}
-          <Box sx={{ position: 'relative', height: 200, overflow: 'hidden', background: 'linear-gradient(135deg, #0f1e2e, #1a2a1a)' }}>
+          <Box
+            sx={{
+              position: 'relative',
+              height: 220,
+              overflow: 'hidden',
+              background: 'linear-gradient(135deg, #111816, #0d1f1a)',
+            }}
+          >
             {place.coverImage ? (
               <Box
                 className="cover-img"
                 component="img"
                 src={place.coverImage}
                 alt={place.name}
-                sx={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  transition: 'transform 0.5s ease',
+                  display: 'block',
+                }}
               />
             ) : (
               <Box
@@ -267,49 +73,103 @@ function PlaceCard({ place, index }) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  background: `linear-gradient(135deg, rgba(200,169,110,0.05), rgba(100,150,200,0.05))`,
                 }}
               >
-                <Typography className="place-emoji" sx={{ fontSize: '4rem', transition: 'transform 0.3s ease' }}>
-                  {emoji}
-                </Typography>
+                <Typography sx={{ fontSize: '4rem' }}>🗺️</Typography>
               </Box>
             )}
             <Box
               sx={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(to top, rgba(8,12,15,0.8) 0%, transparent 60%)',
+                background: 'linear-gradient(to top, rgba(11,15,14,0.9) 0%, transparent 55%)',
               }}
             />
-            {place.day && (
+
+            {dateStr && (
               <Chip
-                icon={<CalendarTodayIcon sx={{ fontSize: '0.7rem !important' }} />}
-                label={`Day ${place.day}`}
+                icon={<CalendarMonthIcon sx={{ fontSize: '0.7rem !important' }} />}
+                label={dateStr}
                 size="small"
                 sx={{
                   position: 'absolute',
                   top: 12,
-                  right: 12,
-                  background: 'rgba(200,169,110,0.2)',
+                  left: 12,
+                  background: 'rgba(11,15,14,0.75)',
                   backdropFilter: 'blur(8px)',
-                  color: '#c8a96e',
-                  border: '1px solid rgba(200,169,110,0.3)',
-                  fontSize: '0.7rem',
-                  fontWeight: 600,
+                  color: '#a8d5c2',
+                  border: '1px solid rgba(95,180,156,0.3)',
+                  fontSize: '0.68rem',
+                  fontWeight: 500,
                 }}
               />
             )}
+
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 12,
+                left: 12,
+                display: 'flex',
+                gap: 1,
+              }}
+            >
+              {place.photoCount > 0 && (
+                <Chip
+                  icon={<PhotoLibraryIcon sx={{ fontSize: '0.65rem !important' }} />}
+                  label={place.photoCount}
+                  size="small"
+                  sx={{
+                    background: 'rgba(95,180,156,0.2)',
+                    backdropFilter: 'blur(8px)',
+                    color: '#5fb49c',
+                    border: '1px solid rgba(95,180,156,0.25)',
+                    fontSize: '0.68rem',
+                    height: 22,
+                  }}
+                />
+              )}
+              {place.personCount > 0 && (
+                <Chip
+                  icon={<PeopleIcon sx={{ fontSize: '0.65rem !important' }} />}
+                  label={place.personCount}
+                  size="small"
+                  sx={{
+                    background: 'rgba(95,180,156,0.2)',
+                    backdropFilter: 'blur(8px)',
+                    color: '#5fb49c',
+                    border: '1px solid rgba(95,180,156,0.25)',
+                    fontSize: '0.68rem',
+                    height: 22,
+                  }}
+                />
+              )}
+            </Box>
           </Box>
 
           <Box sx={{ p: 2.5 }}>
+            {place.location && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.8 }}>
+                <PlaceIcon sx={{ fontSize: '0.78rem', color: '#5fb49c' }} />
+                <Typography
+                  sx={{
+                    color: '#5fb49c',
+                    fontSize: '0.74rem',
+                    fontWeight: 500,
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {place.location}
+                </Typography>
+              </Box>
+            )}
             <Typography
-              variant="h6"
+              variant="h5"
               sx={{
-                fontFamily: '"Playfair Display", serif',
-                color: '#f0e8d8',
+                color: '#e8f0ec',
                 mb: 0.8,
-                fontSize: '1.1rem',
+                fontSize: '1.25rem',
+                lineHeight: 1.2,
               }}
             >
               {place.name}
@@ -317,7 +177,7 @@ function PlaceCard({ place, index }) {
             {place.description && (
               <Typography
                 sx={{
-                  color: '#9a8a72',
+                  color: '#7a9e90',
                   fontSize: '0.82rem',
                   lineHeight: 1.7,
                   display: '-webkit-box',
@@ -329,9 +189,23 @@ function PlaceCard({ place, index }) {
                 {place.description}
               </Typography>
             )}
-            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 0.5, color: '#c8a96e' }}>
-              <ExploreIcon sx={{ fontSize: '0.9rem' }} />
-              <Typography sx={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.05em' }}>
+            <Box
+              sx={{
+                mt: 2,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                color: '#5fb49c',
+              }}
+            >
+              <ExploreIcon sx={{ fontSize: '0.85rem' }} />
+              <Typography
+                sx={{
+                  fontSize: '0.74rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.08em',
+                }}
+              >
                 EXPLORE
               </Typography>
             </Box>
@@ -339,86 +213,256 @@ function PlaceCard({ place, index }) {
         </CardActionArea>
       </Card>
     </motion.div>
-  )
+  );
+}
+
+// ---- Hero Section (without stats cards) ----
+function Hero() {
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 0.5], [0, -80]);
+
+  return (
+    <Box
+      sx={{
+        position: 'relative',
+        minHeight: '90vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        background: '#0b0f0e',
+        pt: 8,
+      }}
+    >
+      {/* Ambient gradient orbs */}
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          background: `
+            radial-gradient(ellipse 70% 60% at 20% 50%, rgba(95,180,156,0.07) 0%, transparent 65%),
+            radial-gradient(ellipse 50% 40% at 80% 60%, rgba(95,180,156,0.05) 0%, transparent 60%)
+          `,
+        }}
+      />
+
+      {/* Floating orbs animation */}
+      {[
+        { w: 300, h: 300, top: '10%', left: '-5%', dur: 8 },
+        { w: 200, h: 200, top: '60%', right: '-3%', dur: 11 },
+        { w: 150, h: 150, top: '40%', left: '60%', dur: 9 },
+      ].map((orb, i) => (
+        <Box
+          key={i}
+          component={motion.div}
+          animate={{ y: [0, -20, 0], scale: [1, 1.05, 1] }}
+          transition={{ duration: orb.dur, repeat: Infinity, ease: 'easeInOut' }}
+          sx={{
+            position: 'absolute',
+            width: orb.w,
+            height: orb.h,
+            top: orb.top,
+            left: orb.left,
+            right: orb.right,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(95,180,156,0.08) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+      ))}
+
+      <motion.div style={{ y, zIndex: 2 }}>
+        <Box sx={{ textAlign: 'center', px: 3, maxWidth: 700 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <Typography
+              sx={{
+                color: '#5fb49c',
+                fontSize: '0.8rem',
+                letterSpacing: '0.4em',
+                textTransform: 'uppercase',
+                mb: 2,
+              }}
+            >
+              Personal Travel Journal
+            </Typography>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.15 }}
+          >
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '3.5rem', md: '5.5rem' },
+                fontWeight: 600,
+                color: '#e8f0ec',
+                lineHeight: 1.05,
+                mb: 1,
+              }}
+            >
+              Every Place
+            </Typography>
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.2rem', md: '3.5rem' },
+                fontWeight: 400,
+                fontStyle: 'italic',
+                color: '#5fb49c',
+                lineHeight: 1,
+                mb: 3,
+              }}
+            >
+              tells a story.
+            </Typography>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.35 }}
+          >
+            <Typography
+              sx={{
+                color: '#7a9e90',
+                fontSize: { xs: '0.92rem', md: '1rem' },
+                lineHeight: 1.8,
+                maxWidth: 460,
+                mx: 'auto',
+              }}
+            >
+              A living archive of places visited, people met, and moments captured
+              — all in one place.
+            </Typography>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <Box
+              component={motion.div}
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              sx={{ mt: 5, color: '#5fb49c', fontSize: '1.4rem' }}
+            >
+              ↓
+            </Box>
+          </motion.div>
+        </Box>
+      </motion.div>
+    </Box>
+  );
+}
+
+// ---- Skeleton loader for places grid ----
+function PlacesSkeleton() {
+  return (
+    <Grid container spacing={3}>
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <Grid item xs={12} sm={6} md={4} key={i}>
+          <Skeleton
+            variant="rectangular"
+            height={320}
+            sx={{ bgcolor: '#1f302a', borderRadius: 3 }}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
 }
 
 export default function HomePage() {
-  const [places, setPlaces] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [places, setPlaces] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getPlaces()
-      .then(res => setPlaces(res.data))
-      .catch(err => console.error(err))
-      .finally(() => setLoading(false))
-  }, [])
-
-  // Group by day
-  const byDay = places.reduce((acc, p) => {
-    const d = p.day || 0
-    if (!acc[d]) acc[d] = []
-    acc[d].push(p)
-    return acc
-  }, {})
+      .then((res) => setPlaces(res.data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
-    <Box sx={{ background: '#080c0f', minHeight: '100vh' }}>
-      <ParallaxHero />
+    <Box sx={{ background: '#0b0f0e', minHeight: '100vh' }}>
+      <Hero />
 
-      <Container maxWidth="lg" sx={{ py: 10 }}>
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-            <CircularProgress sx={{ color: '#c8a96e' }} />
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 6 }}>
+            <Box
+              sx={{
+                width: 3,
+                height: 28,
+                background: '#5fb49c',
+                borderRadius: 2,
+              }}
+            />
+            <Typography
+              variant="h4"
+              sx={{
+                color: '#5fb49c',
+                fontStyle: 'italic',
+                fontSize: { xs: '1.4rem', md: '1.8rem' },
+              }}
+            >
+              All Places
+            </Typography>
           </Box>
+        </motion.div>
+
+        {loading ? (
+          <PlacesSkeleton />
         ) : places.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 10 }}>
-            <Typography sx={{ color: '#9a8a72', mb: 2 }}>No places yet.</Typography>
-            <Typography sx={{ color: '#9a8a72', fontSize: '0.9rem' }}>
-              Go to Admin → Seed Data to load the Tawang itinerary.
+          <Box sx={{ textAlign: 'center', py: 12 }}>
+            <Typography sx={{ fontSize: '3rem', mb: 2 }}>🌍</Typography>
+            <Typography sx={{ color: '#7a9e90', mb: 1 }}>
+              No places yet.
+            </Typography>
+            <Typography sx={{ color: '#4a6e60', fontSize: '0.85rem' }}>
+              Go to Admin panel and add your first place.
             </Typography>
           </Box>
         ) : (
-          Object.keys(byDay).sort().map(day => (
-            <Box key={day} sx={{ mb: 8 }}>
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, gap: 2 }}>
-                  <Box sx={{ width: 3, height: 28, background: '#c8a96e', borderRadius: 2 }} />
-                  <Typography
-                    sx={{
-                      fontFamily: '"Playfair Display", serif',
-                      fontSize: { xs: '1.1rem', md: '1.3rem' },
-                      color: '#c8a96e',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    {DAY_LABELS[day] || `Day ${day}`}
-                  </Typography>
-                </Box>
-              </motion.div>
-
-              <Grid container spacing={3}>
-                {byDay[day].map((place, i) => (
-                  <Grid item xs={12} sm={6} md={4} key={place._id}>
-                    <PlaceCard place={place} index={i} />
-                  </Grid>
-                ))}
+          <Grid container spacing={3}>
+            {places.map((place, i) => (
+              <Grid item xs={12} sm={6} md={4} key={place._id}>
+                <PlaceCard place={place} index={i} />
               </Grid>
-            </Box>
-          ))
+            ))}
+          </Grid>
         )}
       </Container>
 
-      {/* Footer */}
-      <Box sx={{ borderTop: '1px solid rgba(200,169,110,0.1)', py: 4, textAlign: 'center' }}>
-        <Typography sx={{ color: '#4a3a2a', fontSize: '0.8rem', fontStyle: 'italic' }}>
-          Tawang, Arunachal Pradesh · 5 Days · 5 Friends · Infinite Memories
+      <Box
+        sx={{
+          borderTop: '1px solid rgba(95,180,156,0.08)',
+          py: 4,
+          textAlign: 'center',
+        }}
+      >
+        <Typography
+          sx={{
+            color: '#2a4a3e',
+            fontSize: '0.78rem',
+            fontStyle: 'italic',
+          }}
+        >
+          Travel Journal · Every journey deserves to be remembered
         </Typography>
       </Box>
     </Box>
-  )
+  );
 }

@@ -1,38 +1,31 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
+import Navbar from './components/Navbar.jsx'
 import HomePage from './pages/HomePage.jsx'
 import PlacePage from './pages/PlacePage.jsx'
-import PersonPage from './pages/PersonPage.jsx'
+import GalleryPage from './pages/GalleryPage.jsx'
 import AdminPage from './pages/AdminPage.jsx'
-import Navbar from './components/Navbar.jsx'
 
 const theme = createTheme({
   palette: {
     mode: 'dark',
-    primary: { main: '#c8a96e' },
-    secondary: { main: '#e8d5b0' },
-    background: { default: '#080c0f', paper: '#0f1519' },
-    text: { primary: '#f0e8d8', secondary: '#9a8a72' },
+    primary: { main: '#5fb49c' },
+    secondary: { main: '#a8d5c2' },
+    background: { default: '#0b0f0e', paper: '#111816' },
+    text: { primary: '#e8f0ec', secondary: '#7a9e90' },
   },
   typography: {
-    fontFamily: '"DM Sans", sans-serif',
-    h1: { fontFamily: '"Playfair Display", serif' },
-    h2: { fontFamily: '"Playfair Display", serif' },
-    h3: { fontFamily: '"Playfair Display", serif' },
-    h4: { fontFamily: '"Playfair Display", serif' },
+    fontFamily: '"Outfit", sans-serif',
+    h1: { fontFamily: '"Cormorant Garamond", serif' },
+    h2: { fontFamily: '"Cormorant Garamond", serif' },
+    h3: { fontFamily: '"Cormorant Garamond", serif' },
+    h4: { fontFamily: '"Cormorant Garamond", serif' },
+    h5: { fontFamily: '"Cormorant Garamond", serif' },
   },
   components: {
-    MuiButton: {
-      styleOverrides: {
-        root: { textTransform: 'none', borderRadius: 2, fontWeight: 500 },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: { backgroundImage: 'none' },
-      },
-    },
+    MuiButton: { styleOverrides: { root: { textTransform: 'none', borderRadius: 8, fontWeight: 500 } } },
+    MuiCard: { styleOverrides: { root: { backgroundImage: 'none' } } },
   },
 })
 
@@ -45,8 +38,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/place/:slug" element={<PlacePage />} />
-          <Route path="/place/:slug/person/:personId" element={<PersonPage />} />
-          <Route path="/place/:slug/group" element={<PersonPage isGroup />} />
+          <Route path="/place/:slug/person/:personId" element={<GalleryPage />} />
+          <Route path="/place/:slug/group" element={<GalleryPage isGroup />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>

@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 
 const placeSchema = new mongoose.Schema({
-  slug: { type: String, required: true, unique: true },
   name: { type: String, required: true },
-  description: { type: String },
-  day: { type: Number },
+  slug: { type: String, required: true, unique: true },
+  location: { type: String, default: '' },        // e.g. "Manali, Himachal Pradesh"
+  date: { type: String, default: '' },            // e.g. "2024-12-20" or "Dec 2024"
+  description: { type: String, default: '' },
   coverImage: { type: String, default: '' },
   coverImageFileId: { type: String, default: '' },
   order: { type: Number, default: 0 },
