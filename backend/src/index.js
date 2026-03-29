@@ -15,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: ['https://travel-journal.deployhub.online'],
+  origin: ['https://tawangmemories.deployhub.online'],
   methods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-password']
