@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const api = axios.create({ baseURL: 'https://tawangmemories-backend.deployhub.online' })
+const api = axios.create({ baseURL: 'https://tawangmemories-backend.deployhub.online/api' })
 const auth = (pw) => ({ 'x-admin-password': pw })
 
 // Places
