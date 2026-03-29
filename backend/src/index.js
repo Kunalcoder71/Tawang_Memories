@@ -15,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: ['https://tawangmemories.deployhub.online'],
+  origin: ['localhost:3000', 'https://tawangmemories-backend.deployhub.online'],
   methods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-password']
